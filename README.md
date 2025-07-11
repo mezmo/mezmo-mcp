@@ -1,0 +1,532 @@
+# Mezmo MCP
+
+Mezmo MCP is a **remote Model Context Provider (MCP)** that lets AI assistants and IDE chat agents interact with the Mezmo platform via the [Model Context Protocol](https://modelcontextprotocol.info/).
+
+Add Mezmo MCP and you can:
+
+- 📦 List, inspect and create **Pipelines**
+- 📤 Export and filter **Logs** with powerful query syntax
+- 🕵️ Run advanced **Root-cause analysis** over recent logs
+
+---
+
+## Table of Contents
+
+- [Mezmo MCP](#mezmo-mcp)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+    - [Requirements](#requirements)
+  - [Security](#security)
+  - [Client Configurations](#client-configurations)
+  - [Troubleshooting](#troubleshooting)
+    - [1. `npx` argument-escaping bug](#1-npx-argument-escaping-bug)
+    - [2. Lost connection to the Mezmo MCP server](#2-lost-connection-to-the-mezmo-mcp-server)
+  - [Next Steps](#next-steps)
+
+---
+
+## Installation
+
+### Requirements
+
+- A Mezmo **Service Key** (generate one in your Mezmo dashboard under Settings > API Keys; see [Mezmo docs](https://docs.mezmo.com/docs/ingestion-key#ingestion-and-service-keys) for details)
+- Node.js ≥ 18 (only needed for clients that use the `mcp-remote` bridge)
+- One of the supported MCP clients below
+
+For every client we follow a simple rule:
+
+1. **Supports remote URL? →** configure it with a `url` that points to `https://mcp.mezmo.com/mcp` and include the `Authorization` header.
+2. **StdIO-only client? →** use the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge:
+
+```bash
+AUTH_HEADER="Bearer <SERVICE KEY>" npx mcp-remote https://mcp.mezmo.com/mcp \
+  --header "Authorization:${AUTH_HEADER}"
+```
+
+---
+
+## Security
+
+Mezmo MCP uses HTTPS for secure data transmission and requires authentication via Service Key. Customer data is encrypted in transit and not stored beyond 30 days (with options for archiving to your preferred cloud storage). Mezmo complies with standards like SOC 2 Type 2, GDPR, HIPAA, and PCI-DSS. For full details, see [Mezmo's Compliance & Security page](https://www.mezmo.com/compliance-security).
+
+---
+
+## Client Configurations
+
+Expand a section below to see setup instructions for your preferred editor or tool.
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Cursor</b></summary>
+
+Cursor **natively supports remote MCP servers**, so you only need a remote configuration.
+
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=mezmo&config=eyJ1cmwiOiJodHRwczovL21jcC5tZXptby5jb20vbWNwIiwiaGVhZGVycyI6eyJBdXRob3JpemF0aW9uIjoiQmVhcmVyIDxTRVJWSUNFIEtFWT4ifX0=)
+
+*Clicking the **Install MCP Server** badge opens Cursor and automatically adds the `mezmo` entry to your `~/.cursor/mcp.json` with a placeholder for the Service Key. After it’s created, edit the file and replace `<SERVICE KEY>` with your actual Mezmo service key. Restart Cursor for changes to take effect. The final configuration should look like the example below.*
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "url": "https://mcp.mezmo.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Windsurf</b></summary>
+
+Windsurf also supports remote servers via the `serverUrl` field.
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "serverUrl": "https://mcp.mezmo.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Trae</b></summary>
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "url": "https://mcp.mezmo.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in VS Code</b></summary>
+
+VS Code’s Copilot Chat supports remote MCP servers with HTTP transport.
+
+```json
+"mcp": {
+  "servers": {
+    "mezmo": {
+      "type": "http",
+      "url": "https://mcp.mezmo.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Visual Studio 2022</b></summary>
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "mezmo": {
+        "type": "http",
+        "url": "https://mcp.mezmo.com/mcp",
+        "headers": {
+          "Authorization": "Bearer <SERVICE KEY>"
+        }
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Zed</b></summary>
+
+Zed **does not support remote URLs** yet, so use the `mcp-remote` bridge.
+
+```json
+{
+  "context_servers": {
+    "Mezmo": {
+      "command": {
+        "path": "npx",
+        "args": [
+          "mcp-remote",
+          "https://mcp.mezmo.com/mcp",
+          "--header",
+          "Authorization:${AUTH_HEADER}"
+        ],
+        "env": {
+          "AUTH_HEADER": "Bearer <SERVICE KEY>"
+        }
+      },
+      "settings": {}
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Gemini CLI</b></summary>
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.mezmo.com/mcp",
+        "--header",
+        "Authorization:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Claude Code</b></summary>
+
+Claude Code supports remote URLs:
+
+```bash
+claude mcp add --transport http mezmo https://mcp.mezmo.com/mcp \
+  --header "Authorization: Bearer <SERVICE KEY>"
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Claude Desktop</b></summary>
+
+```json
+{
+  "mcpServers": {
+    "Mezmo": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.mezmo.com/mcp",
+        "--header",
+        "Authorization:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in BoltAI</b></summary>
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.mezmo.com/mcp",
+        "--header",
+        "Authorization:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install on Windows (cmd)</b></summary>
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "mcp-remote",
+        "https://mcp.mezmo.com/mcp",
+        "--header",
+        "Authorization:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Augment Code</b></summary>
+
+Add a new MCP and enter:
+
+```bash
+AUTH_HEADER="Bearer <SERVICE KEY>" npx mcp-remote https://mcp.mezmo.com/mcp \
+  --header "Authorization:${AUTH_HEADER}"
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Roo Code</b></summary>
+
+Roo Code supports remote URLs:
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "type": "streamable-http",
+      "url": "https://mcp.mezmo.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Zencoder</b></summary>
+
+```json
+{
+  "command": "npx",
+  "args": [
+    "mcp-remote",
+    "https://mcp.mezmo.com/mcp",
+    "--header",
+    "Authorization:${AUTH_HEADER}"
+  ],
+  "env": {
+    "AUTH_HEADER": "Bearer <SERVICE KEY>"
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Amazon Q Developer CLI</b></summary>
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.mezmo.com/mcp",
+        "--header",
+        "Authorization:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Qodo Gen</b></summary>
+
+Qodo Gen supports remote URLs:
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "url": "https://mcp.mezmo.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in JetBrains AI Assistant</b></summary>
+
+```json
+{
+  "mcpServers": {
+    "mezmo": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://mcp.mezmo.com/mcp",
+        "--header",
+        "Authorization:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "Bearer <SERVICE KEY>"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Warp</b></summary>
+
+```json
+{
+  "Mezmo": {
+    "command": "npx",
+    "args": [
+      "mcp-remote",
+      "https://mcp.mezmo.com/mcp",
+      "--header",
+      "Authorization:${AUTH_HEADER}"
+    ],
+    "env": {
+      "AUTH_HEADER": "Bearer <SERVICE KEY>"
+    },
+    "working_directory": null,
+    "start_on_launch": true
+  }
+}
+```
+
+</details>
+
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Opencode</b></summary>
+
+Opencode supports remote URLs:
+
+```json
+"mcp": {
+  "mezmo": {
+    "type": "remote",
+    "url": "https://mcp.mezmo.com/mcp",
+    "headers": {
+      "Authorization": "Bearer <SERVICE KEY>"
+    },
+    "enabled": true
+  }
+}
+```
+
+</details>
+
+---
+
+## Troubleshooting
+
+### 1. `npx` argument-escaping bug
+
+Some clients pass command-line arguments to `npx` without quoting spaces. This can split the `Authorization` header (e.g. `Bearer` and the token become separate arguments) and cause authentication failures.
+
+**Work-around:** store the header in an environment variable and pass it without spaces:
+
+```json
+{
+  "command": "npx",
+  "args": [
+    "mcp-remote",
+    "https://mcp.mezmo.com/mcp",
+    "--header",
+    "Authorization:${AUTH_HEADER}"
+  ],
+  "env": {
+    "AUTH_HEADER": "Bearer <SERVICE KEY>"
+  }
+}
+```
+
+### 2. Lost connection to the Mezmo MCP server
+
+If your client shows an error such as “server disconnected” or stops responding to MCP commands:
+
+1. Disable or remove the **Mezmo** MCP entry in your client settings.
+2. Re-enable (or re-add) the same entry, or simply restart the client.
+
+This forces the client to establish a fresh connection to the Mezmo MCP backend.
+
+---
+
+## Next Steps
+
+Once your client is configured you can immediately run natural-language commands such as
+
+- `list all my pipelines`
+- `show me details for pipeline <pipeline title>`
+- `create a new pipeline called "My Awesome Pipeline"`
+- `export error logs from the last 30 minutes for app "my-app-frontend"`
+- `analyze my <app name> error logs with the query “tag:prod” from the last 30 minutes and determine root cause`
+
+Enjoy streamlined observability with Mezmo + AI! 🎉
+
