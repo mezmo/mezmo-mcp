@@ -4,7 +4,7 @@ Mezmo MCP is a **remote Model Context Provider (MCP)** that lets AI assistants a
 
 Add Mezmo MCP and you can:
 
-- 📦 List, inspect and create **Pipelines**
+- 📦 List and describe **Pipelines**
 - 📤 Export and filter **Logs** with powerful query syntax
 - 🕵️ Run advanced **Root-cause analysis** over recent logs
 
@@ -524,7 +524,6 @@ Once your client is configured you can immediately run natural-language commands
 
 - `list all my pipelines`
 - `show me details for pipeline <pipeline title>`
-- `create a new pipeline called "My Awesome Pipeline"`
 - `export error logs from the last 30 minutes for app "my-app-frontend"`
 - `analyze my <app name> error logs with the query “tag:prod” from the last 30 minutes and determine root cause`
 
