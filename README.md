@@ -482,6 +482,27 @@ Opencode supports remote URLs:
 
 </details>
 
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Codex CLI</b></summary>
+
+Add to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.mezmo]
+command = "npx"
+args = [
+  "mcp-remote",
+  "https://mcp.mezmo.com/mcp",
+  "--header",
+  "Authorization:${AUTH_HEADER}",
+]
+env = { AUTH_HEADER = "Bearer <SERVICE KEY>" }
+```
+
+</details>
+
+
 ---
 
 ## Troubleshooting
