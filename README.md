@@ -1,27 +1,73 @@
-# Mezmo MCP
+# Mezmo MCP Server (Model Context Protocol)
 
-Mezmo MCP is a **remote Model Context Provider (MCP)** that lets AI assistants and IDE chat agents interact with the Mezmo platform via the [Model Context Protocol](https://modelcontextprotocol.info/).
+Mezmo MCP is a **remote Model Context Protocol (MCP) server** that lets AI assistants and IDE chat agents interact with the Mezmo observability platform via the [Model Context Protocol](https://modelcontextprotocol.info/). Use it for streamlined observability, log analysis, and root-cause analysis in your favorite tools.
 
 Add Mezmo MCP and you can:
 
+- 🕵️ Run advanced **Root-cause analysis** over recent logs
 - 📦 List and describe **Pipelines**
 - 📤 Export and filter **Logs** with powerful query syntax
-- 🕵️ Run advanced **Root-cause analysis** over recent logs
 
 ---
 
 ## Table of Contents
 
-- [Mezmo MCP](#mezmo-mcp)
+- [Mezmo MCP Server (Model Context Protocol)](#mezmo-mcp-server-model-context-protocol)
   - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Available Tools \& Examples](#available-tools--examples)
+  - [Best Practices](#best-practices)
   - [Installation](#installation)
     - [Requirements](#requirements)
-  - [Security](#security)
   - [Client Configurations](#client-configurations)
   - [Troubleshooting](#troubleshooting)
     - [1. `npx` argument-escaping bug](#1-npx-argument-escaping-bug)
     - [2. Lost connection to the Mezmo MCP server](#2-lost-connection-to-the-mezmo-mcp-server)
+    - [3. 401/403 authentication errors](#3-401403-authentication-errors)
   - [Next Steps](#next-steps)
+
+---
+
+## Overview
+
+Mezmo MCP is a remote MCP server that connects AI assistants and IDE chat to Mezmo so you can run advanced root-cause analysis, discover pipelines, and export logs without hosting anything yourself. It’s built for observability use cases and works across many popular MCP clients.
+
+---
+
+
+## Available Tools & Examples
+
+- analyze_logs_for_root_cause_relative_time: analyze logs over a relative window
+  - Example: `analyze my logs from the last 30 minutes and determine root cause for any issues that you find`
+- analyze_logs_for_root_cause_time_range: analyze logs between specific timestamps
+  - Example: `analyze errors between 2025-01-01T10:00:00Z and 2025-01-01T11:00:00Z`
+- deduplicate_logs_relative_time: deduplicate similar logs over a relative window
+  - Example: `deduplicate error logs from the last hour for app "checkout-service"`
+- deduplicate_logs_time_range: deduplicate similar logs between specific timestamps
+  - Example: `deduplicate logs from 2025-01-01T10:00:00Z to 2025-01-01T11:00:00Z`
+- export_logs_relative_time: export raw logs over a relative window
+  - Example: `export error logs from the last 30 minutes for app "my-app-frontend"`
+- export_logs_time_range: export raw logs between specific timestamps
+  - Example: `export logs from 2025-01-01T10:00:00Z to 2025-01-01T11:00:00Z with level error`
+- list_pipelines: list all pipelines
+  - Example: `list all my pipelines`
+- get_pipeline: get details for a pipeline by ID
+  - Example: `show me details for pipeline <pipeline id>`
+
+---
+
+## Best Practices
+
+- Start broad for root-cause analysis
+  - If the query is too narrow, our RCA can't do its thing. Cast a wide net, and if needed, specify app/service/level in subsequent queries.
+- Prefer analyze_logs_for_root_cause or deduplicate_log tools for insights
+  - These tools deduplicate and groups similar logs for better summaries, allowing the results to fit into finite LLM context windows.
+- Use relative time ranges
+  - Prefer values like `last_15_minutes`, `last_hour` when supported.
+- Keep prompts simple; add filters gradually
+  - Add `app`, `host`, `level`, and `query` filters step by step.
+- Use export_logs for raw data only
+  - For dashboards or offline analysis, use `export_logs`; otherwise prefer RCA.
 
 ---
 
@@ -45,12 +91,6 @@ AUTH_HEADER="Bearer <SERVICE KEY>" npx mcp-remote https://mcp.mezmo.com/mcp \
 
 ---
 
-## Security
-
-Mezmo MCP uses HTTPS for secure data transmission and requires authentication via Service Key. Customer data is encrypted in transit and not stored beyond 30 days (with options for archiving to your preferred cloud storage). Mezmo complies with standards like SOC 2 Type 2, GDPR, HIPAA, and PCI-DSS. For full details, see [Mezmo's Compliance & Security page](https://www.mezmo.com/compliance-security).
-
----
-
 ## Client Configurations
 
 Expand a section below to see setup instructions for your preferred editor or tool.
@@ -61,7 +101,7 @@ Expand a section below to see setup instructions for your preferred editor or to
 
 Cursor **natively supports remote MCP servers**, so you only need a remote configuration.
 
-[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=mezmo&config=eyJ1cmwiOiJodHRwczovL21jcC5tZXptby5jb20vbWNwIiwiaGVhZGVycyI6eyJBdXRob3JpemF0aW9uIjoiQmVhcmVyIDxTRVJWSUNFIEtFWT4ifX0=)
+[![Install Mezmo MCP Server in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=mezmo&config=eyJ1cmwiOiJodHRwczovL21jcC5tZXptby5jb20vbWNwIiwiaGVhZGVycyI6eyJBdXRob3JpemF0aW9uIjoiQmVhcmVyIDxTRVJWSUNFIEtFWT4ifX0=)
 
 *Clicking the **Install MCP Server** badge opens Cursor and automatically adds the `mezmo` entry to your `~/.cursor/mcp.json` with a placeholder for the Service Key. After it’s created, edit the file and replace `<SERVICE KEY>` with your actual Mezmo service key. Restart Cursor for changes to take effect. The final configuration should look like the example below.*
 
@@ -516,16 +556,21 @@ If your client shows an error such as “server disconnected” or stops respond
 
 This forces the client to establish a fresh connection to the Mezmo MCP backend.
 
+### 3. 401/403 authentication errors
+
+- Verify the `Authorization` header is present and formatted as `Bearer <SERVICE KEY>`.
+- If using `npx mcp-remote`, prefer the environment variable approach to avoid splitting the header.
+- Regenerate your Service Key in Mezmo and try again if issues persist.
+
 ---
 
 ## Next Steps
 
 Once your client is configured you can immediately run natural-language commands such as
 
+- `analyze my logs from the last 30 minutes and determine root cause for any issues that you find`
 - `list all my pipelines`
 - `show me details for pipeline <pipeline title>`
 - `export error logs from the last 30 minutes for app "my-app-frontend"`
-- `analyze my <app name> error logs with the query “tag:prod” from the last 30 minutes and determine root cause`
 
 Enjoy streamlined observability with Mezmo + AI! 🎉
-
