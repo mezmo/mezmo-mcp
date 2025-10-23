@@ -522,6 +522,39 @@ Opencode supports remote URLs:
 
 </details>
 
+<!-- ------------------------------------------------------------------ -->
+<details>
+<summary><b>Install in Codex CLI</b></summary>
+
+Add to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.mezmo]
+command = "npx"
+args = [
+  "mcp-remote",
+  "https://mcp.mezmo.com/mcp",
+  "--header",
+  "Authorization:${AUTH_HEADER}",
+]
+env = { AUTH_HEADER = "Bearer <SERVICE KEY>" }
+```
+
+Codex [defaults to being sandboxed](https://github.com/openai/codex/blob/main/docs/sandbox.md), so you'll also need to give it network access. If you want to run in a sandbox mode of `workspace-write` for example, add this:
+```toml
+[sandbox_workspace_write]
+network_access = true
+```
+
+You can either start with a flag like `codex --sandbox workspace-write` or set a default mode with:
+
+```toml
+sandbox_mode = "workspace-write"
+```
+
+</details>
+
+
 ---
 
 ## Troubleshooting
