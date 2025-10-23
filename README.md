@@ -101,7 +101,7 @@ Expand a section below to see setup instructions for your preferred editor or to
 
 Cursor **natively supports remote MCP servers**, so you only need a remote configuration.
 
-[![Install Mezmo MCP Server in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=mezmo&config=eyJ1cmwiOiJodHRwczovL21jcC5tZXptby5jb20vbWNwIiwiaGVhZGVycyI6eyJBdXRob3JpemF0aW9uIjoiQmVhcmVyIDxTRVJWSUNFIEtFWT4ifX0=)
+[![Install Mezmo MCP Server in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=mezmo&config=eyJ1cmwiOiJodHRwczovL21jcC5tZXptby5jb20vbWNwIiwiaGVhZGVycyI6eyJBdXRob3JpemF0aW9uIjoiQmVhcmVyIDxTRVJWSUNFIEtFWT4ifX0=)
 
 *Clicking the **Install MCP Server** badge opens Cursor and automatically adds the `mezmo` entry to your `~/.cursor/mcp.json` with a placeholder for the Service Key. After it’s created, edit the file and replace `<SERVICE KEY>` with your actual Mezmo service key. Restart Cursor for changes to take effect. The final configuration should look like the example below.*
 
