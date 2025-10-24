@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/mezmo-mezmo-mcp-badge.png)](https://mseep.ai/app/mezmo-mezmo-mcp)
+
 # Mezmo MCP Server (Model Context Protocol)
 
 Mezmo MCP is a **remote Model Context Protocol (MCP) server** that lets AI assistants and IDE chat agents interact with the Mezmo observability platform via the [Model Context Protocol](https://modelcontextprotocol.info/). Use it for streamlined observability, log analysis, and root-cause analysis in your favorite tools.
