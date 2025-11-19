@@ -45,10 +45,6 @@ Mezmo MCP is a remote MCP server that connects AI assistants and IDE chat to Mez
   - Example: `deduplicate error logs from the last hour for app "checkout-service"`
 - deduplicate_logs_time_range: deduplicate similar logs between specific timestamps
   - Example: `deduplicate logs from 2025-01-01T10:00:00Z to 2025-01-01T11:00:00Z`
-- export_logs_relative_time: export raw logs over a relative window
-  - Example: `export error logs from the last 30 minutes for app "my-app-frontend"`
-- export_logs_time_range: export raw logs between specific timestamps
-  - Example: `export logs from 2025-01-01T10:00:00Z to 2025-01-01T11:00:00Z with level error`
 - list_pipelines: list all pipelines
   - Example: `list all my pipelines`
 - get_pipeline: get details for a pipeline by ID
@@ -604,6 +600,6 @@ Once your client is configured you can immediately run natural-language commands
 - `analyze my logs from the last 30 minutes and determine root cause for any issues that you find`
 - `list all my pipelines`
 - `show me details for pipeline <pipeline title>`
-- `export error logs from the last 30 minutes for app "my-app-frontend"`
+- `deduplicate error logs from the last 30 minutes for app "my-app-frontend"`
 
 Enjoy streamlined observability with Mezmo + AI! 🎉
